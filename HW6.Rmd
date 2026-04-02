@@ -1,0 +1,48 @@
+---
+
+title: "Homework 6"
+output: html_document
+---------------------
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(lubridate)
+
+load("house_prices.rda")
+house_prices$year <- year(house_prices$date)
+```
+
+# Part 2a: House Price Trends
+
+```{r}
+ggplot(house_prices, aes(x = year, y = house_price_index)) +
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(breaks = c(1980, 2000, 2020),
+                     labels = c("80", "00", "20"))
+```
+
+# Part 2b: Reshape Data
+
+```{r}
+house_reshaped <- house_prices %>%
+  gather(key = "measure",
+         value = "value",
+         -date, -state, -year)
+
+head(house_reshaped)
+```
+
+# Part 2c: Combined Plot
+
+```{r}
+ggplot(house_reshaped, aes(x = year, y = value, color = measure)) +
+  geom_line() +
+  facet_wrap(~state)
+```
+
+# Comment
+
+This graph is not ideal because house price index and unemployment percentage are on very different scales. Plotting them together makes it difficult to interpret trends clearly.
